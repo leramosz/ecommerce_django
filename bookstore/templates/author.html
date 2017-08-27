@@ -51,18 +51,7 @@
                         <h2 class="module-title">Books</h2>
                         <div class="customNavigation">
                              <ul id="myTab" class="nav nav-tabs grid-list-view-buttons" role="tablist">
-                                <? if(count($author['books']) < 4): ?>             
-                                    <li role="presentation" class="active">
-                                        <a href="#list" class="btn navbar-btn" role="tab" data-toggle="tab">
-                                            <span class="glyphicon glyphicon-th-list active"></span>
-                                        </a>
-                                    </li>
-                                    <li role="presentation">
-                                        <a href="#grid" class="btn navbar-btn" role="tab" data-toggle="tab">
-                                            <span class="glyphicon glyphicon-th"></span>
-                                        </a>
-                                    </li>
-                                <? else: ?>
+                                {% if grid %}
                                     <li role="presentation" class="active">
                                         <a href="#grid" class="btn navbar-btn" role="tab" data-toggle="tab">
                                             <span class="glyphicon glyphicon-th active"></span>
@@ -72,8 +61,19 @@
                                         <a href="#list" class="btn navbar-btn" role="tab" data-toggle="tab">
                                         <span class="glyphicon glyphicon-th-list"></span>
                                         </a>
+                                    </li>            
+                                {% else %}
+                                     <li role="presentation" class="active">
+                                        <a href="#list" class="btn navbar-btn" role="tab" data-toggle="tab">
+                                            <span class="glyphicon glyphicon-th-list active"></span>
+                                        </a>
                                     </li>
-                                <? endif; ?>
+                                    <li role="presentation">
+                                        <a href="#grid" class="btn navbar-btn" role="tab" data-toggle="tab">
+                                            <span class="glyphicon glyphicon-th"></span>
+                                        </a>
+                                    </li>
+                                {% endif %}
                             </ul><!-- /.nav -->
                         </div>
                         <p class="module-subtitle">Do eiusmod tempor incid... et dolore magna aliqua</p>
@@ -82,122 +82,49 @@
                 </div>
 
                 <div class="tab-content">
-                    
-                    <div class="tab-pane wow fadeInUp <?=(count($author['books']) < 4) ? 'active':''?>" id="list" role="tabpanel" style="visibility: visible; animation-name: fadeInUp;">
-                        <? foreach($author['books'] as $book): ?>
-                            <div class="featured-book">   
-                                <div class="books clearfix">
-                                    <div class="row">
-                                        <div class="col-md-3 col-sm-5">
-                                            <div class="book">
-                                                <? if($book['hot']): ?> 
-                                                    <div class="hot-ribbon">
-                                                        <div class="hot-ribbon-content">hot</div>
-                                                    </div>   
-                                                <? endif; ?> 
-                                                <? if($book['sale_off']): ?> 
-                                                    <div class="sale-ribbon">
-                                                        <div class="sale-ribbon-content">sale off</div>
-                                                    </div> 
-                                                <? endif; ?>
-                                                <div class="book-cover">
-                                                    <img class="img-responsive" alt="" width="193" height="261" src="<?=BASE_URL.$book['image']?>">
-                                                    <div class="fade"></div>
-                                                    <div class="book-price">
-                                                        <span class="price">
-                                                            <? if($book['sale_off']): ?>
-                                                                <span class="price-before-discount">
-                                                                    $ <?=$book['price']?>
-                                                                </span> 
-                                                                $ <?=$book['sale_off']?>
-                                                            <? else: ?>
-                                                                $ <?=$book['price']?>
-                                                            <? endif; ?>
-                                                        </span>
-                                                    </div><!-- /.book-price -->
-                                                </div><!-- /.book-cover -->
-                                            </div><!-- /.book -->
-                                        </div><!-- /.col -->
 
-                                        <div class="col-md-9 col-sm-7">
-                                            <div class="book-details book-details-list-view">
-                                                <h3 class="book-title">
-                                                    <a href="<?=BASE_URL.'/books/'.$book['id']?>"><?=$book['name']?></a>
-                                                </h3>
-                                                <div class="star-rating">
-                                                    <?for($i=1; $i<=5; $i++):?>
-                                                        <i class="fa fa-star <?=($i <= $book['rating']) ? 'color':''?>"></i>
-                                                    <? endfor; ?>
-                                                </div><!-- /.star-rating -->                                
-                                            </div><!-- /.book-details -->
-
-                                            <div class="featured-book-content">
-                                                <p class="hidden-sm hidden-md"><?=$book['overview']?></p>
-
-                                            </div><!-- /.featured-book-content -->
-                                            <? if(isset($user)): ?>
-                                                <div class="actions">
-                                                    <a class="add-to-cart book-<?=$book['id']?>" id="<?=(array_key_exists($book['id'], $session_cart_books)) ? 'list-remove-from-cart':'list-add-to-cart'?>" data-book="<?=$book['id']?>" data-price="<?=($book['sale_off']) ? $book['sale_off']:$book['price']?>" title="<?=(array_key_exists($book['id'], $session_cart_books)) ? 'Remove from Cart':'Add to Cart'?>" href="#">
-                                                        <? if(array_key_exists($book['id'], $session_cart_books)): ?>
-                                                            <i class="icon icon-minus fa fa-minus-circle"></i>
-                                                        <? else: ?>
-                                                            <i class="icon icon-plus fa fa-plus-circle"></i>
-                                                        <? endif; ?>
-                                                    </a>
-                                                    <a class="add-to-cart book-<?=$book['id']?>" id="<?=(in_array($book['id'], $session_fav_books)) ? 'list-remove-from-favourite':'list-add-to-favourite'?>" data-book="<?=$book['id']?>" data-user="<?=$user?>" href="#" title="<?=(in_array($book['id'], $session_fav_books)) ? 'Remove from Favourite':'Add to Favourite'?>">
-                                                        <i class="icon icon-heart fa fa-heart"></i>
-                                                    </a>
-                                                </div><!-- /.actions -->
-                                            <? endif; ?>
-                                        </div><!-- /.col -->
-                                    </div><!-- /.row -->
-                                </div><!-- /.books -->
-                            </div><!-- /.feature-book -->
-                        <? endforeach; ?>
-                    </div><!-- /.tab-pane -->
-
-                    <div class="tab-pane  wow fadeInUp <?=(count($author['books']) >= 4) ? 'active':''?>" id="grid" role="tabpanel" style="visibility: visible; animation-name: fadeInUp;">
+                    <div class="tab-pane  wow fadeInUp {% if grid %} active {% endif %}" id="grid" role="tabpanel" style="visibility: visible; animation-name: fadeInUp;">
                     
                         <div class="category-books books grid-view">
                             <div class="row">
-                               <? foreach($author['books'] as $book): ?>
+                               {% for book in author_books %}
                                     <div class="col-md-3 col-sm-6">
                                         <div class="book">      
-                                            <? if($book['hot']): ?> 
+                                            {% if book.hot %}
                                                 <div class="hot-ribbon">
                                                     <div class="hot-ribbon-content">hot</div>
                                                 </div>   
-                                            <? endif; ?> 
-                                            <? if($book['sale_off']): ?> 
+                                            {% endif %}
+                                            {% if book.sale_off > 0 %}
                                                 <div class="sale-ribbon">
                                                     <div class="sale-ribbon-content">sale off</div>
                                                 </div> 
-                                            <? endif; ?>
+                                           {% endif %} 
                                             <div class="book-cover">
                                                 <div class="book-inner">
-                                                    <img class="img-responsive" alt="" width="193" height="261" src="<?=BASE_URL.$book['image']?>">
+                                                    <img class="img-responsive" alt="" width="193" height="261" src="{% static book.image %}">
                                                     <div class="fade"></div>
                                                     <div class="book-price">
                                                         <span class="price">
-                                                            <? if($book['sale_off']): ?>
+                                                            {% if book.sale_off > 0 %}
                                                                 <span class="price-before-discount">
-                                                                    $ <?=$book['price']?>
+                                                                    $ {{book.price}}
                                                                 </span> 
-                                                                $ <?=$book['sale_off']?>
-                                                            <? else: ?>
-                                                                $ <?=$book['price']?>
-                                                            <? endif; ?>                     
+                                                                $ {{book.sale_off}}
+                                                            {% else %}
+                                                                $ {{book.price}}
+                                                            {% endif %}                     
                                                         </span>
                                                     </div><!-- /.book-price -->
-                                                    <? if(isset($user)): ?>
+                                                    <!-- <? if(isset($user)): ?> -->
                                                         <div class="cart animate-effect">
                                                             <div class="action">
                                                                 <a class="add-to-cart book-<?=$book['id']?>" id="<?=(array_key_exists($book['id'], $session_cart_books)) ? 'grid-remove-from-cart':'grid-add-to-cart'?>" data-book="<?=$book['id']?>" data-price="<?=($book['sale_off']) ? $book['sale_off']:$book['price']?>" title="<?=(array_key_exists($book['id'], $session_cart_books)) ? 'Remove from Cart':'Add to Cart'?>" href="#">
-                                                                    <? if(array_key_exists($book['id'], $session_cart_books)): ?>
+                                                                    <!-- <? if(array_key_exists($book['id'], $session_cart_books)): ?> -->
                                                                         <i class="icon icon-minus fa fa-minus-circle"></i>
-                                                                    <? else: ?>
+                                                                    <!-- <? else: ?>
                                                                         <i class="icon icon-plus fa fa-plus-circle"></i>
-                                                                    <? endif; ?>
+                                                                    <? endif; ?> -->
                                                                 </a>
                                                                 <a class="add-to-cart book-<?=$book['id']?>" id="<?=(in_array($book['id'], $session_fav_books)) ? 'grid-remove-from-favourite':'grid-add-to-favourite'?>" data-book="<?=$book['id']?>" data-user="<?=$user?>" href="#" title="<?=(in_array($book['id'], $session_fav_books)) ? 'Remove from Favourite':'Add to Favourite'?>">
                                                                     <i class="icon icon-heart fa fa-heart"></i>
@@ -210,23 +137,97 @@
 
                                             <div class="book-details">
                                                 <h3 class="book-title">
-                                                    <a href="<?=BASE_URL.'/books/'.$book['id']?>"> 
+                                                    <a href="{% url 'view_book' book.id %}"> 
                                                         View Book
                                                     </a>
                                                 </h3>
                                                 <div class="star-rating">
-                                                    <?for($i=1; $i<=5; $i++):?>
-                                                        <i class="fa fa-star <?=($i <= $book['rating']) ? 'color':''?>"></i>
-                                                    <? endfor; ?>
+                                                    {% for i in 1..5 %}
+                                                        <i class="fa fa-star {% if i <= book.rating %} color {% endif %}"></i>
+                                                    {% endfor %}
                                                 </div><!-- /.star-rating -->
                                             </div><!-- /.book-details -->
                                         </div><!-- /.book -->
                                     </div> <!-- /.col -->
-                                <? endforeach; ?>
+                                {% endfor %}
                             </div> <!-- /.row -->
                         </div><!-- /.category-books -->
                     </div><!-- /.tab-pane -->
+                    
+                    <div class="tab-pane wow fadeInUp {% if not grid %} active {% endif %}" id="list" role="tabpanel" style="visibility: visible; animation-name: fadeInUp;">
+                        {% for book in author_books %}
+                            <div class="featured-book">   
+                                <div class="books clearfix">
+                                    <div class="row">
+                                        <div class="col-md-3 col-sm-5">
+                                            <div class="book">
+                                                {% if book.hot %}
+                                                    <div class="hot-ribbon">
+                                                        <div class="hot-ribbon-content">hot</div>
+                                                    </div>   
+                                                {% endif %}
+                                                {% if book.sale_off > 0 %}
+                                                    <div class="sale-ribbon">
+                                                        <div class="sale-ribbon-content">sale off</div>
+                                                    </div> 
+                                               {% endif %} 
+                                                <div class="book-cover">
+                                                    <img class="img-responsive" alt="" width="193" height="261" src="{% static book.image %}">
+                                                    <div class="fade"></div>
+                                                    <div class="book-price">
+                                                        <span class="price">
+                                                            {% if book.sale_off > 0 %}
+                                                                <span class="price-before-discount">
+                                                                    $ {{book.price}}
+                                                                </span> 
+                                                                $ {{book.sale_off}}
+                                                            {% else %}
+                                                                $ {{book.price}}
+                                                            {% endif %}
+                                                        </span>
+                                                    </div><!-- /.book-price -->
+                                                </div><!-- /.book-cover -->
+                                            </div><!-- /.book -->
+                                        </div><!-- /.col -->
 
+                                        <div class="col-md-9 col-sm-7">
+                                            <div class="book-details book-details-list-view">
+                                                <h3 class="book-title">
+                                                    <a href="{% url 'view_book' book.id %}">  
+                                                        {{book.name}}
+                                                    </a>
+                                                </h3>
+                                                <div class="star-rating">
+                                                    {% for i in 1..5 %}
+                                                        <i class="fa fa-star {% if i <= book.rating %} color {% endif %}"></i>
+                                                    {% endfor %}
+                                                </div><!-- /.star-rating -->                                
+                                            </div><!-- /.book-details -->
+
+                                            <div class="featured-book-content">
+                                                <p class="hidden-sm hidden-md">{{book.overview}}</p>
+
+                                            </div><!-- /.featured-book-content -->
+                                            <!-- <? if(isset($user)): ?> -->
+                                                <div class="actions">
+                                                    <a class="add-to-cart book-<?=$book['id']?>" id="<?=(array_key_exists($book['id'], $session_cart_books)) ? 'list-remove-from-cart':'list-add-to-cart'?>" data-book="<?=$book['id']?>" data-price="<?=($book['sale_off']) ? $book['sale_off']:$book['price']?>" title="<?=(array_key_exists($book['id'], $session_cart_books)) ? 'Remove from Cart':'Add to Cart'?>" href="#">
+                                                        <!-- <? if(array_key_exists($book['id'], $session_cart_books)): ?> -->
+                                                            <i class="icon icon-minus fa fa-minus-circle"></i>
+                                                        <!-- <? else: ?>
+                                                            <i class="icon icon-plus fa fa-plus-circle"></i>
+                                                        <? endif; ?> -->
+                                                    </a>
+                                                    <a class="add-to-cart book-<?=$book['id']?>" id="<?=(in_array($book['id'], $session_fav_books)) ? 'list-remove-from-favourite':'list-add-to-favourite'?>" data-book="<?=$book['id']?>" data-user="<?=$user?>" href="#" title="<?=(in_array($book['id'], $session_fav_books)) ? 'Remove from Favourite':'Add to Favourite'?>">
+                                                        <i class="icon icon-heart fa fa-heart"></i>
+                                                    </a>
+                                                </div><!-- /.actions -->
+                                            <? endif; ?>
+                                        </div><!-- /.col -->
+                                    </div><!-- /.row -->
+                                </div><!-- /.books -->
+                            </div><!-- /.feature-book -->
+                        {% endfor %}
+                    </div><!-- /.tab-pane -->
                 </div> <!-- /.tab-content -->
 
             </div> <!-- /.wow -->

@@ -6,8 +6,13 @@
     <div class="breadcrumb-container">
         <div class="container">
             <ul class="breadcrumb pull-left">
-                <li><a href="/">Home</a></li>
-                <li class="active">Books</li>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                {% if selected_genre %}
+                    <li><a href="{% url 'index_books' %}">Books</a></li>
+                    <li class="active">{{selected_genre.name}}</li>
+                {% else %}
+                    <li class="active">Books</li>
+                {% endif %}
             </ul><!-- /.breadcrumb -->      
 
         </div><!-- /.container -->
@@ -28,13 +33,29 @@
                             <div class="row">
                                 <div class="col-md-3 col-sm-4">
                                     <ul id="myTab" class="nav nav-tabs grid-list-view-buttons" role="tablist">
-                                       <!--  <? if(count($books) <= 3): ?> -->
-                                            <li role="presentation" class="active"><a href="#list" class="btn navbar-btn" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-th-list"></span></a></li>
-                                            <li role="presentation"><a href="#grid" class="btn navbar-btn" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-th active"></span></a></li>
-                                        <!-- <? else: ?> -->
-                                            <!-- <li role="presentation" class="active"><a href="#grid" class="btn navbar-btn" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-th active"></span></a></li>
-                                            <li role="presentation"><a href="#list" class="btn navbar-btn" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-th-list"></span></a></li> -->
-                                       <!--  <? endif; ?> -->
+                                        {% if grid %}
+                                            <li role="presentation" class="active">
+                                                <a href="#grid" class="btn navbar-btn" role="tab" data-toggle="tab">
+                                                    <span class="glyphicon glyphicon-th active"></span>
+                                                </a>
+                                            </li>
+                                            <li role="presentation">
+                                                <a href="#list" class="btn navbar-btn" role="tab" data-toggle="tab">
+                                                    <span class="glyphicon glyphicon-th-list"></span>
+                                                </a>
+                                            </li>
+                                        {% else %}
+                                            <li role="presentation" class="active">
+                                                <a href="#list" class="btn navbar-btn" role="tab" data-toggle="tab">
+                                                    <span class="glyphicon glyphicon-th-list"></span>
+                                                </a>
+                                            </li>
+                                            <li role="presentation">
+                                                <a href="#grid" class="btn navbar-btn" role="tab" data-toggle="tab">
+                                                    <span class="glyphicon glyphicon-th active"></span>
+                                                </a>
+                                            </li>
+                                        {% endif %}
                                     </ul><!-- /.nav -->
                                 </div><!-- /.col -->
 
@@ -42,35 +63,38 @@
                         </div><!-- /.category-toolbar -->
 
                         <div class="tab-content">
-                            <!-- <div class="tab-pane <?=(count($books) > 3) ? 'active': ''?> wow fadeInUp" id="grid" role="tabpanel"> -->
-                                <div class="tab-pane wow fadeInUp" id="grid" role="tabpanel">
+                                <div class="tab-pane wow fadeInUp {% if grid %} active {% endif %}" id="grid" role="tabpanel">
                                 <div class="category-books books grid-view">
                                     <div class="row">
                                          
-                                    <!-- <? foreach ($books as $book): ?>  -->         
+                                    {% for book in books %}       
                                         <div class="col-md-4 col-sm-6">
 
                                             <div class="book">      
-                                                <!-- <? if($book['hot']): ?>  -->
+                                                {% if book.hot %}
                                                     <div class="hot-ribbon">
                                                         <div class="hot-ribbon-content">hot</div>
                                                     </div>   
-                                                <!-- <? endif; ?> 
-                                                <? if($book['sale_off']): ?>  -->
+                                                {% endif %}
+                                                {% if book.sale_off > 0 %}
                                                     <div class="sale-ribbon">
                                                         <div class="sale-ribbon-content">sale off</div>
                                                     </div> 
-                                               <!--  <? endif; ?>  -->  
+                                               {% endif %} 
                                                 <div class="book-cover">
                                                 <div class="book-inner">
-                                                    <img src="{% static 'images/blank.gif' %}" data-echo="{% static 'images/books/1.jpg' %}" width="193" height="261" alt="">
+                                                    <img src="{% static 'images/blank.gif' %}" data-echo="{% static book.image %}" width="193" height="261" alt="">
                                                     <div class="fade"></div>
                                                     <div class="book-price">
                                                         <span class="price">
-                                                            <span class="price-before-discount">
-                                                                $ 100
-                                                            </span> 
-                                                            $ 150
+                                                            {% if book.sale_off > 0 %}
+                                                                <span class="price-before-discount">
+                                                                    $ {{book.price}}
+                                                                </span> 
+                                                                $ {{book.sale_off}}
+                                                            {% else %}
+                                                                $ {{book.price}}
+                                                            {% endif %}
                                                         </span>   
                                                     </div><!-- /.book-price -->
                                                        <!--  <? if(isset($user)): ?> -->
@@ -94,69 +118,57 @@
 
 
                                                 <div class="book-details">
-                                                    <h3 class="book-title"><a href="/books/1">View Book</a></h3>
+                                                    <h3 class="book-title"><a href="{% url 'view_book' book.id %}">View Book</a></h3>
                                                     <p class="book-author">
-                                                        <a href="/authors/1">
-                                                            Author Name
-                                                            <!-- <?=$book['author']['name']?> -->
+                                                        <a href="{% url 'view_author' book.author.id %}">    
+                                                            {{book.author.name}}
                                                         </a>
                                                     </p>
                                                     <div class="star-rating">
-                                                        <!-- <?for($i=1; $i<=5; $i++):?> -->
-                                                            <!-- <i class="fa fa-star <?=($i <= $book['rating']) ? 'color':''?>"></i> -->
-                                                            <i class="fa fa-star color"></i>
-                                                            <i class="fa fa-star color"></i>
-                                                            <i class="fa fa-star color"></i>
-                                                            <i class="fa fa-star color"></i>
-                                                            <i class="fa fa-star color"></i>
-                                                        <!-- <? endfor; ?> -->
+                                                        {% for i in 1..5 %}
+                                                            <i class="fa fa-star {% if i <= book.rating %} color {% endif %}"></i>
+                                                        {% endfor %}
                                                     </div><!-- /.star-rating -->
 
                                                 </div><!-- /.book-details -->
                                             </div><!-- /.book -->
                                         </div>
-                                    <? endforeach; ?>
+                                    {% endfor %}
                                 </div>
                             </div><!-- /.category-books -->
                         </div><!-- /.tab-pane -->
 
-                        <!-- <div class="tab-pane wow <?=(count($books) <= 3) ? 'active': ''?> fadeInUp" id="list" role="tabpanel"> -->
-
-                        <div class="tab-pane wow active fadeInUp" id="list" role="tabpanel">
+                        <div class="tab-pane wow fadeInUp {% if not grid %} active {% endif %}" id="list" role="tabpanel">
                              
-                            <!-- <? foreach($books as $book): ?>  -->              
+                            {% for book in books %}             
                             <div class="featured-book">
                                 <div class="books clearfix">
                                     <div class="row">
                                         <div class="col-md-4 col-sm-5">
                                             <div class="book">
-                                                <!-- <? if($book['hot']): ?>  -->
+                                                {% if book.hot %}
                                                     <div class="hot-ribbon">
                                                         <div class="hot-ribbon-content">hot</div>
                                                     </div>   
-                                               <!--  <? endif; ?> 
-                                                <? if($book['sale_off']): ?>  -->
+                                                {% endif %}
+                                                {% if book.sale_off > 0 %}
                                                     <div class="sale-ribbon">
                                                         <div class="sale-ribbon-content">sale off</div>
                                                     </div> 
-                                                <!-- <? endif; ?> -->   
+                                               {% endif %}   
                                                 <div class="book-cover">
-                                                    <img class="img-responsive" width="193" height="261" alt="" src="{% static 'images/books/1.jpg' %}">
+                                                    <img class="img-responsive" width="193" height="261" alt="" src="{% static book.image %}">
                                                     <div class="fade"></div>
                                                     <div class="book-price">
                                                         <span class="price">
-                                                            <!-- <? if($book['sale_off']): ?>
+                                                            {% if book.sale_off > 0 %}
                                                                 <span class="price-before-discount">
-                                                                    $ <?=$book['price']?>
+                                                                    $ {{book.price}}
                                                                 </span> 
-                                                                $ <?=$book['sale_off']?>
-                                                            <? else: ?>
-                                                                $ <?=$book['price']?>
-                                                            <? endif; ?> -->
-                                                            <span class="price-before-discount">
-                                                                $ 100
-                                                            </span>
-                                                            $ 150
+                                                                $ {{book.sale_off}}
+                                                            {% else %}
+                                                                $ {{book.price}}
+                                                            {% endif %}
                                                         </span>   
                                                     </div><!-- /.book-price -->
                                                 </div><!-- /.book-cover -->
@@ -166,32 +178,24 @@
                                         <div class="col-md-8 col-sm-7">
                                             <div class="book-details book-details-list-view">
                                                 <h3 class="book-title">
-                                                    <a href="/books/1">
-                                                        <!-- <?=$book['name']?> -->
-                                                        Book Name
+                                                    <a href="{% url 'view_book' book.id %}">
+                                                        {{book.name}}
                                                     </a>
                                                 </h3>
                                                 <p class="book-author">
-                                                    <a href="/authors/1">
-                                                        <!-- <?=$book['author']['name']?> -->
-                                                        Book Name    
+                                                    <a href="{% url 'view_author' book.author.id %}">    
+                                                        {{book.author.name}}
                                                     </a>
                                                 </p>
                                                 <div class="star-rating">
-                                                     <!-- <?for($i=1; $i<=5; $i++):?> -->
-                                                            <!-- <i class="fa fa-star <?=($i <= $book['rating']) ? 'color':''?>"></i> -->
-                                                        <!-- <? endfor; ?> -->
-                                                         <i class="fa fa-star color"></i>
-                                                        <i class="fa fa-star color"></i>
-                                                        <i class="fa fa-star color"></i>
-                                                        <i class="fa fa-star color"></i>
-                                                        <i class="fa fa-star color"></i>
+                                                    {% for i in 1..5 %}
+                                                        <i class="fa fa-star {% if book.rating >= i %} color {% endif %}"></i>
+                                                    {% endfor %}
                                                 </div><!-- /.star-rating -->
                                             </div><!-- /.book-details -->
                                             <div class="featured-book-content">
                                                 <p class="hidden-sm hidden-md">
-                                                    <!-- <?=$book['overview']?> -->
-                                                    Book Overview
+                                                    {{book.overview}}
                                                 </p>
 
                                             </div><!-- /.featured-book-content -->
@@ -213,65 +217,51 @@
                                     </div><!-- /.row -->
                                 </div><!-- /.books -->
                             </div><!-- /.row -->
-                            <!-- <? endforeach; ?> -->
+                            {% endfor %}
                         </div><!-- /.tab-pane -->
 
                     </div><!-- /.tab-content -->
 
                 </div><!-- /.col -->
 
-                                <!-- ========================================= CONTENT :END ========================================= -->
+                <!-- ========================================= CONTENT :END ========================================= -->
 
-                                <!-- ========================================= SIDEBAR ========================================= -->
-                                <div class="col-sm-4 col-sm-pull-8">
-                                    <aside class="sidebar">
-                                        <!-- ========================================= BOOK CATEGORY ========================================= -->
-                                        <section class="module">
-                                            <header class="module-header">
-                                                <h4 class="module-book-category-title">Genres</h4>
-                                            </header><!-- /.module-header -->
+                <!-- ========================================= SIDEBAR ========================================= -->
+                <div class="col-sm-4 col-sm-pull-8">
+                    <aside class="sidebar">
+                        <!-- ========================================= BOOK CATEGORY ========================================= -->
+                        <section class="module">
+                            <header class="module-header">
+                                <h4 class="module-book-category-title">Genres</h4>
+                            </header><!-- /.module-header -->
 
-                                            <div class="module-body category-module-body">
-                                                <ul class="list-unstyled category-list">
-                                                    <!-- <li <?=(!isset($selected_genre)) ? 'class="sub-category-list"':''?>><a href="<?=BASE_URL?>/books">All</a></li>
-                                                    <? foreach($genres_list as $genre): ?>
-                                                        <li <?=(isset($selected_genre) && $selected_genre['id'] == $genre['id']) ? 'class="sub-category-list"':''?>>
-                                                            <a href="<?=BASE_URL?>/books/genre/<?=$genre['id']?>"><?=$genre['name']?></a>
-                                                        </li>
-                                                    <? endforeach; ?> -->
-                                                    <li class="sub-category-list">
-                                                        <a href="/books">All</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="/books/genre/1">Fantasy</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="/books/genre/2">Horror</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="/books/genre/3">Mystery</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="/books/genre/4">Thriller</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="/books/genre/5">Music</a>
-                                                    </li>
-                                                </ul><!-- /.list-unstyled -->
-                                            </div><!-- /.module-body -->
-                                        </section><!-- /.module -->
-                                        <!-- ========================================= BOOK CATEGORY : END ========================================= -->                    </aside><!-- /.sidebar -->
-                                    </div><!-- /.col -->
-                                    <!-- ========================================= SIDEBAR :END ========================================= -->
-                                </div><!-- /.row -->
-                            </div><!-- /.page-body -->
-                        </div><!-- /.container -->
-                    </div><!-- /.category page -->
+                            <div class="module-body category-module-body">
+                                <ul class="list-unstyled category-list">
+                                    <li {% if not selected_genre %} class="sub-category-list" {% endif %}>
+                                        <a href="{% url 'index_authors' %}">All</a>
+                                    </li>
+                                    {% for genre in genres %}
+                                        <li {% if selected_genre and selected_genre.id == genre.id %} class="sub-category-list {% endif %}">
+                                            <a href="{% url 'by_genre_books' genre.id%}">  
+                                                {{genre.name}}
+                                            </a>
+                                        </li>
+                                    {% endfor %}
+                                </ul><!-- /.list-unstyled -->
+                            </div><!-- /.module-body -->
+                        </section><!-- /.module -->
+                        <!-- ========================================= BOOK CATEGORY : END ========================================= -->                    </aside><!-- /.sidebar -->
+                    </div><!-- /.col -->
+                    <!-- ========================================= SIDEBAR :END ========================================= -->
+                </div><!-- /.row -->
+            </div><!-- /.page-body -->
+        </div><!-- /.container -->
+    </div><!-- /.category page -->
 
-                    <a class="scrollup hidden-xs hidden-sm" href="#" style="display: none;">
-                        <img src="{% static 'images/top-scroll.png' %}" alt="" ></a>
-                </div>
+    <a class="scrollup hidden-xs hidden-sm" href="#" style="display: none;">
+        <img src="{% static 'images/top-scroll.png' %}" alt="" ></a>
+</div>
 
-                
-            </div><!-- /.container -->
+
+</div><!-- /.container -->
 {% endblock %}

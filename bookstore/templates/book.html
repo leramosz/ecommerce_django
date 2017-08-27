@@ -6,9 +6,9 @@
         <div class="breadcrumb-container">
             <div class="container">
                 <ul class="breadcrumb pull-left">
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/books">Books</a></li>
-                    <li class="active"><!-- <?=$book['name']?> -->Book Name</li>
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li><a href="{% url 'index_books' %}">Books</a></li>
+                    <li class="active">{{book.name}}</li>
                 </ul><!-- /.breadcrumb -->
 
             </div><!-- /.container -->
@@ -19,43 +19,37 @@
                 <div class="primary-block clearfix">
                     <div class="row">
                         <div class="col-sm-4">
-                            <!-- <? if($book['hot']): ?> --> 
+                            {% if book.hot %}
                                 <div class="hot-ribbon">
                                     <div class="hot-ribbon-content">hot</div>
                                 </div>   
-                            <!-- <? endif; ?> 
-                            <? if($book['sale_off']): ?>  -->
+                            {% endif %}
+                            {% if book.sale_off > 0 %}
                                 <div class="sale-ribbon">
                                     <div class="sale-ribbon-content">sale off</div>
                                 </div> 
-                            <!-- <? endif; ?> -->
+                           {% endif %} 
                             <div class="book-cover book detail-book-cover">
-                                <img src="{% static '/images/blank.gif' %}" class="img-responsive" data-echo="{% static '/images/books/1.jpg' %}" alt="">
+                                <img src="{% static '/images/blank.gif' %}" class="img-responsive" data-echo="{% static book.image %}" alt="">
                                 <div class="fade"></div>
                             </div><!-- /.book-cover -->
                         </div><!-- /.col -->
 
                         <div class="col-sm-8">
                             <div class="book-detail-header">
-                                <h2 class="book-title"><!-- <?=$book['name']?> --> Book Name</h2>
+                                <h2 class="book-title">{{book.name}}</h2>
                                 <p class="book-author">
                                     By <span class="book-author-name">
-                                        <a href="/authors/1">           
-                                           <!--  <?=$book['author']['name']?> -->
-                                           Author Name
+                                        <a href="{% url 'view_author' book.author.id %}">           
+                                           {{book.author.name}}
                                         </a>
                                     </span>
                                 </p>
                                 <div class="star-rating">
-                                <!-- <?for($i=1; $i<=5; $i++):?>
-                                    <i class="fa fa-star <?=($i <= $book['rating']) ? 'color':''?>"></i>
-                                <? endfor; ?> -->
-                                <i class="fa fa-star color"></i>
-                                <i class="fa fa-star color"></i>
-                                <i class="fa fa-star color"></i>
-                                <i class="fa fa-star color"></i>
-                                <i class="fa fa-star color"></i>
-                            </div><!-- /.star-rating -->   
+                                    {% for i in 1..5 %}
+                                        <i class="fa fa-star {% if i <= book.rating %} color {% endif %}"></i>
+                                    {% endfor %}
+                                </div><!-- /.star-rating -->   
                             </div><!-- /.book-detail-header -->
 
                             <div class="book-detail-body">
@@ -64,19 +58,14 @@
                                     <div class="pull-left col-md-6 col-sm-5 col-xs-12">
                                         <div class="detail-book-price">
                                             <span class="price">
-                                                <!-- <? if($book['sale_off']): ?>
+                                                {% if book.sale_off > 0 %}
                                                     <span class="price-before-discount">
-                                                        $ <?=$book['price']?>
+                                                        $ {{book.price}}
                                                     </span> 
-                                                    $ <?=$book['sale_off']?>
-                                                <? else: ?>
-                                                    $ <?=$book['price']?>
-                                                <? endif; ?> -->
-                                                <span class="price-before-discount">
-                                                        <!-- $ <?=$book['price']?> -->
-                                                        $ 100
-                                                    </span>
-                                                $ 150
+                                                    $ {{book.sale_off}}
+                                                {% else %}
+                                                    $ {{book.price}}
+                                                {% endif %}
                                             </span>
                                         </div><!-- /.detail-book-price -->
                                     </div><!-- /.pull-left -->
@@ -105,7 +94,7 @@
 
                                 <div class="product-description">
                                     <h3>Quick Overview</h3>
-                                    <p><!-- <?=$book['overview']?> --> BOOK OVERVIEW</p>
+                                    <p>{{book.overview}}</p>
                                 </div><!-- /.product-description -->
 
                             </div><!-- /.book-detail-body -->

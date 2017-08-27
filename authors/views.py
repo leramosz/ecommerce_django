@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from .models import Author
 from genre.models import Genre
+from books.models import Book
 
 def index(request):
 	genres = Genre.objects.all()
@@ -15,9 +16,11 @@ def view(request, id):
 	except Exception:
 		data = {'page': {'view': 'index_authors', 'name': 'Authors'}}
 		return render(request, 'error.html', data)
-	data = {'author':author}
+	author_books = Book.objects.filter(author__id = author.id)
+	grid = len(author_books) >= 4
+	data = {'author':author, 'author_books':author_books, 'grid':grid}
 	return render(request, 'author.html', data)
-	
+
 def by_genre(request, id):
 	try:
 		selected_genre = Genre.objects.get(id = id)
