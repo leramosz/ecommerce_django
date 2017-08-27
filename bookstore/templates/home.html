@@ -1,0 +1,298 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+<div class="content">
+    <div class="home page">
+        <!-- .slider -->
+        <div class="slider">
+            <!-- ========================================== SECTION – HERO : END========================================= -->
+            <div id="hero">
+                <div id="owl-main" class="owl-carousel owl-theme">
+                    
+                    <? foreach($slider_books as $slider_book): ?>
+                        <div class="item">
+                            <div class="container">
+                                <div class="content caption">
+                                    <div class="row">
+                                        <div class="col-sm-5 col-sm-push-7">
+                                            <div class="book-in-shelf">
+                                                <div class="book-shelf"> 
+                                                    
+                                                    <div class="book-cover slider-book-cover">
+                                                        <img class="img-responsive" alt="" src="<?=BASE_URL."/".$slider_book['image']?>" width="258" height="351"> 
+                                                        <div class="fade"></div>
+                                                    </div> <!-- /.book-cover -->                        
+                                                </div><!-- /.book-shelf -->
+                                            </div><!-- /.book-in-shelf -->
+                                        </div><!-- /.col -->
+
+                                        <div class="col-sm-7 col-sm-pull-5">
+                                            <div class="clearfix slider-caption">
+                                                <div class="slider-caption-heading">
+                                                    <h1 class="slider-caption-title fadeInDown-1">
+                                                        <?=$slider_book['name']?>
+                                                    </h1>
+                                                    <p class="slider-caption-subtitle fadeInDown-2 hidden-xs"><?=$slider_book['overview']?></p>
+                                                </div><!-- /.slider-caption-heading -->
+                                                <div class="clearfix slider-price fadeInDown-3 hidden-xs">
+                                                    <a class="btn btn-secondary btn-price" href="<?=BASE_URL?>/books/<?=$slider_book['id']?>">View Book</a>
+                                                </div> <!-- /.slider-price -->
+                                            </div><!-- /.slider-caption -->
+                                        </div><!-- /.col -->
+                                    </div><!-- /.row -->
+                                </div><!-- /.content.caption -->
+                            </div><!-- /.container -->
+                        </div><!-- /.item -->
+                     <? endforeach; ?>
+                </div><!-- /#owl-main -->
+            </div> <!-- /.hero -->
+        </div><!-- /.slider -->
+
+        <div class="container">
+        <!-- .block-new-books -->
+        <!-- ========================================= NEW BOOKS MODULE ========================================= -->
+<div class="wow fadeInUp">
+<div class="module block-new-books module-block">
+<div class="module-heading">
+<h2 class="module-title">New Books</h2>
+<div class="customNavigation">
+    <a href="#" data-target="#new-carousel" class="btn btn-navigation left-nav-arrow owl-prev"><i class='icon fa fa-caret-left'></i></a>
+    <a href="#"  data-target="#new-carousel" class="btn btn-navigation right-nav-arrow owl-next"><i class='icon fa fa-caret-right'></i></a> 
+</div><!-- /.customNavigation -->
+<p class="module-subtitle">Do eiusmod tempor incididunt ut labore et dolore magna aliqua</p>
+</div><!-- /.module-heading -->
+
+<div class="module-body">
+<div class="books">
+
+    <div id="new-carousel" class="owl-carousel home-owl-carousel">
+        <? foreach($new_books as $new_book): ?>
+            <div class="item item-carousel">
+                <div class="books">
+                    <div class="book">  
+                        <? if($new_book['hot']): ?> 
+                            <div class="hot-ribbon">
+                                <div class="hot-ribbon-content">hot</div>
+                            </div>   
+                        <? endif; ?> 
+                        <? if($new_book['sale_off']): ?> 
+                            <div class="sale-ribbon">
+                                <div class="sale-ribbon-content">sale off</div>
+                            </div> 
+                        <? endif; ?>
+                        <div class="book-cover">
+                            <div class="book-inner">
+                                <img src="<?=BASE_URL?>/assets/images/blank.gif" data-echo="<?=BASE_URL.'/'.$new_book['image']?>" width="193" height="261" alt="">
+                                <div class="fade"></div>
+                                <div class="book-price">
+                                    <span class="price">
+                                        <? if($new_book['sale_off']): ?>
+                                            <span class="price-before-discount">
+                                                $ <?=$new_book['price']?>
+                                            </span> 
+                                            $ <?=$new_book['sale_off']?>
+                                        <? else: ?>
+                                            $ <?=$new_book['price']?>
+                                        <? endif; ?>
+                                    </span>
+                                </div><!-- /.book-price -->
+                                <? if(isset($user)): ?>
+                                    <div class="cart animate-effect">
+                                        <div class="action">
+                                            <a class="add-to-cart" id="<?=(array_key_exists($new_book['id'], $session_cart_books)) ? 'home-remove-from-cart':'home-add-to-cart'?>" data-book="<?=$new_book['id']?>" data-price="<?=($new_book['sale_off']) ? $new_book['sale_off']:$new_book['price']?>" href="#" title="<?=(array_key_exists($new_book['id'], $session_cart_books)) ? 'Remove from Cart':'Add to Cart'?>">
+                                                <? if(array_key_exists($new_book['id'], $session_cart_books)): ?>
+                                                    <i class="icon icon-minus fa fa-minus-circle"></i>
+                                                <? else: ?>
+                                                    <i class="icon icon-plus fa fa-plus-circle"></i>
+                                                <? endif; ?>
+                                            </a>
+                                            <a class="add-to-cart" id="<?=(in_array($new_book['id'], $session_fav_books)) ? 'home-remove-from-favourite':'home-add-to-favourite'?>" data-book="<?=$new_book['id']?>" data-user="<?=$user?>" href="#" title="<?=(in_array($new_book['id'], $session_fav_books)) ? 'Remove from Favourite':'Add to Favourite'?>">
+                                                <i class="icon icon-heart fa fa-heart"></i>
+                                            </a>
+                                        </div><!-- /.action -->
+                                    </div><!-- /.cart -->
+                                <? endif; ?>
+                            </div><!-- /.book-inner -->
+                        </div><!-- /.book-cover -->
+                    </div><!-- /.book -->
+
+                    <div class="book-details">
+                            <h3 class="book-title">
+                                <a href="<?=BASE_URL?>/books/<?=$new_book['id']?>"><?=$new_book['name']?></a>
+                            </h3>
+                            <p class="book-author">
+                                <a href="<?=BASE_URL?>/authors/<?=$new_book['author']['id']?>">      
+                                    <?=$new_book['author']['name']?>
+                                </a>
+                            </p>
+                            <div class="star-rating">
+                                <?for($i=1; $i<=5; $i++):?>
+                                    <i class="fa fa-star <?=($i <= $new_book['rating']) ? 'color':''?>"></i>
+                                <? endfor; ?>
+                            </div><!-- /.star-rating -->
+
+                        </div><!-- /.book-details -->
+
+                </div><!-- /.books -->
+            </div><!-- /.item -->
+         <? endforeach; ?>
+
+            </div><!-- /#new-carousel -->           
+        </div><!-- /.books -->
+    </div><!-- /.module-body -->
+</div><!-- /.module -->
+</div><!-- /.row -->
+<!-- ========================================= NEW BOOKS MODULE : END ========================================= -->     <!-- /.block-new-books -->
+
+<!-- .block-best-sellers -->        
+<!-- ========================================= BEST SELLER MODULE ========================================= -->
+<div class="wow fadeInUp">
+<div class="module block-best-sellers module-block">
+    <div class="module-heading">
+        <h2 class="module-title">Best Sellers</h2>
+
+        <div class="customNavigation">
+            <a href="#" data-target="#seller-carousel" class="btn btn-navigation left-nav-arrow-seller owl-prev"><i class='icon fa fa-caret-left'></i></a>
+            <a href="#" data-target="#seller-carousel" class="btn btn-navigation right-nav-arrow-seller owl-next"><i class='icon fa fa-caret-right'></i></a>    
+        </div><!-- /.customNavigation -->
+
+        <p class="module-subtitle">Do eiusmod tempor incididunt ut labore et dolore magna aliqua</p>
+    </div><!-- /.module-heading -->
+
+    <div class="module-body">
+        <div class="books">
+
+            <div id="seller-carousel" class="owl-carousel home-owl-carousel">
+
+                <? foreach($best_sellers as $best_seller): ?>
+            <div class="item item-carousel">
+                <div class="books">
+                    <div class="book">  
+                        <? if($best_seller['hot']): ?> 
+                            <div class="hot-ribbon">
+                                <div class="hot-ribbon-content">hot</div>
+                            </div>   
+                        <? endif; ?> 
+                        <? if($best_seller['sale_off']): ?> 
+                            <div class="sale-ribbon">
+                                <div class="sale-ribbon-content">sale off</div>
+                            </div> 
+                        <? endif; ?>
+                        <div class="book-cover">
+                            <div class="book-inner">
+                                <img src="<?=BASE_URL?>/assets/images/blank.gif" data-echo="<?=BASE_URL.'/'.$best_seller['image']?>" width="193" height="261" alt="">
+                                <div class="fade"></div>
+                                <div class="book-price">
+                                    <span class="price">
+                                        <? if($best_seller['sale_off']): ?>
+                                            <span class="price-before-discount">
+                                                $ <?=$best_seller['price']?>
+                                            </span> 
+                                            $ <?=$best_seller['sale_off']?>
+                                        <? else: ?>
+                                            $ <?=$best_seller['price']?>
+                                        <? endif; ?>
+                                    </span>
+                                </div><!-- /.book-price -->
+
+                                <? if(isset($user)): ?>
+                                    <div class="cart animate-effect">
+                                        <div class="action">
+                                            <a class="add-to-cart" id="<?=(array_key_exists($best_seller['id'], $session_cart_books)) ? 'home-remove-from-cart':'home-add-to-cart'?>" data-book="<?=$best_seller['id']?>" data-price="<?=($best_seller['sale_off']) ? $best_seller['sale_off']:$best_seller['price']?>" href="#" title="<?=(array_key_exists($best_seller['id'], $session_cart_books)) ? 'Remove from Cart': 'Add to Cart'?>">
+                                                <? if(array_key_exists($best_seller['id'], $session_cart_books)): ?>
+                                                    <i class="icon icon-minus fa fa-minus-circle"></i>
+                                                <? else: ?>
+                                                    <i class="icon icon-plus fa fa-plus-circle"></i>
+                                                <? endif; ?>
+                                            </a>
+                                            <a class="add-to-cart" id="<?=(in_array($best_seller['id'], $session_fav_books)) ? 'home-remove-from-favourite':'home-add-to-favourite'?>" data-book="<?=$best_seller['id']?>" data-user="<?=$user?>" href="#" title="<?=(in_array($best_seller['id'], $session_fav_books)) ? 'Remove from Favourite':'Add to Favourite'?>">
+                                                <i class="icon icon-heart fa fa-heart"></i>
+                                            </a>
+                                        </div><!-- /.action -->
+                                    </div><!-- /.cart -->
+                                <? endif; ?>
+                            </div><!-- /.book-inner -->
+                        </div><!-- /.book-cover -->
+                    </div><!-- /.book -->
+
+                    <div class="book-details">
+                            <h3 class="book-title">
+                                <a href="<?=BASE_URL?>/books/<?=$best_seller['id']?>"><?=$best_seller['name']?></a>
+                            </h3>
+                            <p class="book-author">
+                                <a href="<?=BASE_URL?>/authors/<?=$best_seller['author']['id']?>">      
+                                    <?=$best_seller['author']['name']?>
+                                </a>
+                            </p>
+                            <div class="star-rating">
+                                <?for($i=1; $i<=5; $i++):?>
+                                    <i class="fa fa-star <?=($i <= $best_seller['rating']) ? 'color':''?>"></i>
+                                <? endfor; ?>
+                            </div><!-- /.star-rating -->
+
+                        </div><!-- /.book-details -->
+
+                </div><!-- /.books -->
+            </div><!-- /.item -->
+         <? endforeach; ?>
+                        </div><!-- /#seller-carousel -->        
+                    </div><!-- /.books --> 
+                </div><!-- /.module-body -->    
+            </div><!-- /.module --> 
+        </div><!-- /.row -->    
+        <!-- ========================================= BEST SELLER MODULE : END ========================================= -->       <!-- /.block-best-sellers -->
+    </div><!-- /.container -->
+
+    <!-- .block-featured-author -->
+    <div class="featured-item-block">
+        <div class="container">
+            <!-- ========================================= FEATURED AUTHOR MODULE ========================================= -->
+            <div class="wow fadeInUp">
+                <div class="module block-featured-author module-block">
+                    <div class="module-heading">
+                        <h2 class="module-title">Featured Author</h2>
+                        <div class="customNavigation">
+                            <a href="#" data-target="#featured-author-carousel" class="btn btn-navigation left-nav-arrow-featured owl-prev"><i class='icon fa fa-caret-left'></i></a>
+                            <a href="#" data-target="#featured-author-carousel" class="btn btn-navigation right-nav-arrow-featured owl-next"><i class='icon fa fa-caret-right'></i></a> 
+                        </div><!-- /.customNavigation -->
+                        <p class="module-subtitle">Do eiusmod tempor incididunt ut labore et dolore magna aliqua</p>
+
+                    </div><!-- /.module-heading -->
+
+                    <div class="module-body" id="featured-author">
+                        <div class="authors">
+
+                            <div id="featured-author-carousel" class="owl-carousel">
+                                
+                                <? foreach($featured_authors as $author): ?>
+                                    <div class="item item-author-block author">
+                                        <div class="author-dp">
+                                            <img src="<?=BASE_URL?>/assets/images/blank.gif" data-echo="<?=BASE_URL.$author['image']?>"  alt="">
+                                        </div>
+                                        <div class="author-details">
+                                            <h3 class="author-name">
+                                                <?=$author['name']?>
+                                            </h3>
+                                            <blockquote class="author-testimonial">             
+                                                <?=trim(substr($author['biography'], 0, 100))?>...
+                                            </blockquote>
+                                            <a href="<?=BASE_URL?>/authors/<?=$author['id']?>" class="btn btn-primary btn-view-books">View Author</a>
+                                        </div><!-- /.author-details -->
+                                    </div><!-- /.item -->
+                                 <? endforeach; ?>
+                
+                            </div><!-- /#featured-author-carousel -->
+                        </div><!-- /.authors -->
+                    </div><!-- /.module-body -->
+                </div><!-- /.module -->
+            </div><!-- /.row -->
+            <!-- ========================================= FEATURED AUTHOR MODULE : END ========================================= -->       </div>
+        </div><!-- /.featured-item-block -->
+        <!-- /.block-featured-author -->
+    </div><!-- /.home-page -->
+    <a class="scrollup hidden-xs hidden-sm" href="#" style="display: none;"><img src="<?=BASE_URL?>/assets/images/top-scroll.png" alt="" ></a>
+</div>
+
+</div><!-- /.container -->
+{% endblock %}

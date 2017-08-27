@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+<div class="content">
+    <div class="breadcrumb-container">
+        <div class="container">
+            <ul class="breadcrumb pull-left">
+                <li><a href="{% url 'home' %}">Home</a></li>
+                {% if selected_genre %}
+                    <li><a href="{% url 'index_authors' %}">Authors</a></li>
+                    <li class="active">{{selected_genre.name}}</li>
+                {% else %}
+                     <li class="active">Authors</li>
+                {% endif %}
+            </ul><!-- /.breadcrumb -->
+                  
+        </div><!-- /.container -->
+    </div><!-- /.breadcrumb-container -->
+
+    <div class="category page">
+        <div class="container">
+            <div class="page-header category-page-header">
+                <h2 class="page-title">Authors</h2>
+                <p class="page-subtitle">Do eiusmod tempor incididunt ut labore et dolore magna aliqua</p>
+            </div><!-- /.page-header -->
+
+            <div class="page-body">
+                <div class="row">
+                    <!-- ========================================= CONTENT ========================================= -->
+                    <div class="col-sm-8 col-sm-push-4">
+                        <div class="category-toolbar">
+                            <div class="row">
+                                <div class="col-md-3 col-sm-4">
+                                    <ul id="myTab" class="nav nav-tabs grid-list-view-buttons" role="tablist">
+                                       {% if grid %}
+                                            <li role="presentation" class="active">
+                                                <a href="#grid" class="btn navbar-btn" role="tab" data-toggle="tab">
+                                                    <span class="glyphicon glyphicon-th active"></span>
+                                                </a>
+                                            </li>
+                                            <li role="presentation">
+                                                <a href="#list" class="btn navbar-btn" role="tab" data-toggle="tab">
+                                                    <span class="glyphicon glyphicon-th-list"></span>
+                                                </a>
+                                            </li>
+                                        {% else %}
+                                             <li role="presentation" class="active">
+                                                <a href="#list" class="btn navbar-btn" role="tab" data-toggle="tab">
+                                                    <span class="glyphicon glyphicon-th-list"></span>
+                                                </a>
+                                            </li>
+                                            <li role="presentation">
+                                                <a href="#grid" class="btn navbar-btn" role="tab" data-toggle="tab">
+                                                    <span class="glyphicon glyphicon-th active"></span>
+                                                </a>
+                                            </li>
+                                        {% endif %}
+                                    </ul><!-- /.nav -->
+                                </div><!-- /.col -->
+                            </div><!-- /.row -->
+                        </div><!-- /.category-toolbar -->
+
+                        <div class="tab-content">
+
+                            <div class="tab-pane wow fadeInUp {% if grid %} active {% endif %}" id="grid" role="tabpanel">
+                                <div class="category-books books grid-view">
+                                    <div class="row">
+                                        {% for author in authors %}
+                                            <div class="col-md-4 col-sm-6">
+                                                 <div class="author-dp">
+                                                    <img src="{% static author.image %}" alt="">
+                                                </div>                                         
+                                                <div class="book-details">
+                                                    <p class="book-author">
+                                                        <a href="{% url 'view_author' author.id %}">
+                                                            {{author.name}}
+                                                        </a>
+                                                    </p>
+                                                </div><!-- /.book-details -->
+                                            </div> <!-- /.col -->
+                                        {% endfor %}
+                                    </div> <!-- /.row -->
+                                </div><!-- /.category-books -->
+                            </div><!-- /.tab-pane -->
+
+                            <div class="tab-pane wow fadeInUp {% if not grid %} active {% endif %}" id="list" role="tabpanel">
+                                {% for author in authors %}         
+                                    <div class="featured-book">
+                                        <div class="books clearfix">
+                                            <div class="row">
+                                                <div class="col-md-4 col-sm-5">
+                                                    <div class="book">     
+                                                        <div class="author-dp">
+                                                            <img src="{% static author.image %}" alt="">
+                                                        </div>
+                                                    </div><!-- /.book -->
+                                                </div><!-- /.col -->
+
+                                                <div class="col-md-8 col-sm-7">
+                                                    <div class="book-details book-details-list-view">
+                                                        <p class="book-author">
+                                                            <a href="{% url 'view_author' author.id %}">
+                                                                {{author.name}}
+                                                            </a>
+                                                        </p>
+                                                    </div><!-- /.book-details -->
+                                                    <div class="featured-book-content">
+                                                        <p class="hidden-sm hidden-md">
+                                                            {{author.biography}}
+                                                        </p>
+                                                    </div><!-- /.featured-book-content -->
+                                                </div><!-- /.col -->
+                                            </div><!-- /.row -->
+                                        </div><!-- /.books -->
+                                    </div><!-- /.featured-book -->
+                                {% endfor %}
+                            </div><!-- /.tab-pane -->
+                        </div><!-- /.tab-content -->
+                    </div><!-- /.col -->
+
+                    <!-- ========================================= CONTENT :END ========================================= -->
+
+                    <!-- ========================================= SIDEBAR ========================================= -->
+                    <div class="col-sm-4 col-sm-pull-8">
+                        <aside class="sidebar">
+                            <!-- ========================================= BOOK CATEGORY ========================================= -->
+                            <section class="module">
+                                <header class="module-header">
+                                    <h4 class="module-book-category-title">Genres</h4>
+                                </header><!-- /.module-header -->
+
+                                <div class="module-body category-module-body">
+                                    <ul class="list-unstyled category-list">
+                                        <li {% if not selected_genre %} class="sub-category-list" {% endif %}>
+                                            <a href="{% url 'index_authors' %}">All</a>
+                                        </li>
+                                        {% for genre in genres %}
+                                            <li {% if selected_genre and selected_genre.id == genre.id %} class="sub-category-list {% endif %}">
+                                                <a href="{% url 'by_genre_author' genre.id%}">  
+                                                    {{genre.name}}
+                                                </a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul><!-- /.list-unstyled -->
+                                </div><!-- /.module-body -->
+                            </section><!-- /.module -->
+<!-- ========================================= BOOK CATEGORY : END ========================================= -->                    </aside><!-- /.sidebar -->
+                    </div><!-- /.col -->
+<!-- ========================================= SIDEBAR :END ========================================= -->
+                </div><!-- /.row -->
+            </div><!-- /.page-body -->
+        </div><!-- /.container -->
+    </div><!-- /.category page -->
+    <a class="scrollup hidden-xs hidden-sm" href="#" style="display: none;">
+        <img src="{% static 'images/top-scroll.png' %}" alt="" >
+    </a>
+</div>
+{% endblock %}
+
